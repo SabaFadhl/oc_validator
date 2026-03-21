@@ -1,0 +1,28 @@
+[
+  {
+    "rule_name": "uppercase_title",
+    "field": "title",
+    "rule_type": "string_check",
+    "condition": "is_all_caps",
+    "message_key": "m8",
+    "validation_level": "csv_wellformedness",
+    "error_type": "warning",
+    "error_label": "uppercase_title",
+    "located_in": "item",
+    "table_index": 0,
+    "valid": true
+  },
+  {
+  "rule_name": "page_interval",
+  "field": "page",
+  "rule_type": "function_check",
+  "condition": "check_page_interval_false",
+  "message_key": "m18",
+  "validation_level": "csv_wellformedness",
+  "error_type": "warning",
+  "error_label": "page_interval",
+  "located_in": "item",
+  "table_index": 0,
+  "valid": true
+}
+]

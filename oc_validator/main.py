@@ -26,7 +26,7 @@ from oc_validator.semantics import Semantics
 from tqdm import tqdm
 from argparse import ArgumentParser
 
-
+from oc_validator.rule_engine import RuleEngine
 # --- Custom Exception classes. ---
 class ValidationError(Exception):
     """Base class for errors related to the validation process."""
@@ -63,6 +63,7 @@ class Validator:
         self.syntax = IdSyntax()
         self.existence = IdExistence(use_meta_endpoint=use_meta_endpoint)
         self.semantics = Semantics()
+        self.rule_engine = RuleEngine(self.helper, self.wellformed)        
         script_dir = dirname(abspath(__file__))  # Directory where the script is located
         self.messages = full_load(open(join(script_dir, 'messages.yaml'), 'r', encoding='utf-8'))
         self.id_type_dict = load(open(join(script_dir, 'id_type_alignment.json'), 'r', encoding='utf-8'))
@@ -249,19 +250,13 @@ class Validator:
                         if len(br_ids_set) != len(items):  # --> some well-formedness error occurred in the id field
                             id_ok = False
 
-                if field == 'title':
-                    if value:
-                        if value.isupper():
-                            message = messages['m8']
-                            table = {row_idx: {field: [0]}}
-                            error_final_report.append(
-                                self.helper.create_error_dict(validation_level='csv_wellformedness',
-                                                              error_type='warning',
-                                                              message=message,
-                                                              error_label='uppercase_title',
-                                                              located_in='item',
-                                                              table=table,
-                                                              valid=True))
+                rule_errors = self.rule_engine.apply_field_rules(
+                    field_name=field,
+                    value=value,
+                    row_idx=row_idx,
+                    messages=messages
+                )
+                error_final_report.extend(rule_errors)
 
                 if field == 'author' or field == 'editor':
                     if value:
@@ -473,19 +468,7 @@ class Validator:
                                                               error_label='page_format',
                                                               located_in='item',
                                                               table=table))
-                        else:
-                            if not self.wellformed.check_page_interval(value):
-                                message = messages['m18']
-                                table = {row_idx: {field: [0]}}
-                                error_final_report.append(
-                                    self.helper.create_error_dict(validation_level='csv_wellformedness',
-                                                                  error_type='warning',
-                                                                  message=message,
-                                                                  error_label='page_interval',
-                                                                  located_in='item',
-                                                                  table=table,
-                                                                  valid=True))
-
+                 
                 if field == 'type':
                     if value:
                         if not self.wellformed.wellformedness_type(value):
