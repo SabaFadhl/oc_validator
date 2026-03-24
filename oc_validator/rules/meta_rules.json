@@ -10,19 +10,26 @@
     "error_label": "uppercase_title",
     "located_in": "item",
     "table_index": 0,
-    "valid": true
+    "valid": true,
+    "severity": "low",
+    "explanation": "The title field contains text written entirely in uppercase letters, which deviates from standard bibliographic formatting conventions.",
+    "suggestion": "Use title-case or sentence-case formatting for the title field (e.g., 'An Introduction to Open Citations' instead of 'AN INTRODUCTION TO OPEN CITATIONS')."
   },
   {
-  "rule_name": "page_interval",
-  "field": "page",
-  "rule_type": "function_check",
-  "condition": "check_page_interval_false",
-  "message_key": "m18",
-  "validation_level": "csv_wellformedness",
-  "error_type": "warning",
-  "error_label": "page_interval",
-  "located_in": "item",
-  "table_index": 0,
-  "valid": true
-}
+    "rule_name": "page_interval",
+    "field": "page",
+    "rule_type": "function_check",
+    "condition": "check_page_interval_false",
+    "preconditions": ["wellformedness_page_true"],
+    "message_key": "m18",
+    "validation_level": "csv_wellformedness",
+    "error_type": "warning",
+    "error_label": "page_interval",
+    "located_in": "item",
+    "table_index": 0,
+    "valid": true,
+    "severity": "medium",
+    "explanation": "The page range specified in the page field is invalid: the starting page number is greater than the ending page number, which is not a meaningful publication range.",
+    "suggestion": "Ensure the page range is expressed as 'start-end' where start <= end (e.g., '101-115'). Check the source data for transcription errors."
+  }
 ]
